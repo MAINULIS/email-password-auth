@@ -11,11 +11,26 @@ const Register = () => {
     const handleSubmit = (event) =>{
         // 1. prevent page refresh 
         event.preventDefault();
-        setSuccess('')
+        setSuccess('');
+        setError('');
         // 2. get data from form
         const email = event.target.email.value;
         const password = event.target.password.value;
         console.log(email, password)
+        // Validation
+        if(! /(?=.*[A-Z])/.test(password)){
+            setError('please add at least 1 uppercase');
+            return;
+        }
+        else if(!/(?=.*\d.*\d.*\d)/.test(password)){
+            setError('please add at least 3 digit')
+            return;
+        }
+        else if(password.length < 6){
+            setError('password should be greater than six')
+            return
+        }
+        
         // 3. create user in firebase
         createUserWithEmailAndPassword(auth, email,password)
         .then(result =>{
@@ -42,7 +57,7 @@ const Register = () => {
     return (
         <div className='my-container  text-center mt-4'>
             <h3 className='text-3xl tracking-wide font-bold mb-5'>Please Register</h3>
-            
+
             <form onSubmit={handleSubmit} className='p-4'>
                <input onChange={handleEmailChange} className='border border-gray-500 px-2 ' type="email" name="email" id=" email" placeholder='Your Email' required />
                <br />
