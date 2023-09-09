@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {createUserWithEmailAndPassword, getAuth, sendEmailVerification} from 'firebase/auth'
+import {createUserWithEmailAndPassword, getAuth, sendEmailVerification, updateProfile} from 'firebase/auth'
 import app from '../firebase/firebase.config';
 import { Link } from 'react-router-dom';
 
@@ -17,7 +17,8 @@ const Register = () => {
         // 2. get data from form
         const email = event.target.email.value;
         const password = event.target.password.value;
-        console.log(email, password)
+        const name = event.target.name.value;
+        console.log(name,email, password)
         // Validation
         if(! /(?=.*[A-Z])/.test(password)){
             setError('please add at least 1 uppercase');
@@ -41,6 +42,7 @@ const Register = () => {
             event.target.reset();
             setSuccess('user has been successfully sign up')
             sendVerificationEmail(result.user);
+            updateUserData(result.user, name)
         })
         .catch(error =>{
             console.error(error.message);
@@ -57,6 +59,18 @@ const Register = () => {
         })
     }
 
+    const updateUserData = (user, name) =>{
+        updateProfile(user, {
+            displayName:name
+        })
+        .then(() =>{
+            console.log('user name update')
+        })
+        .catch(error =>{
+            setError(error.message)
+        })
+    }
+
     const handleEmailChange = (event) =>{
     //    console.log(event.target.value)
     //    setEmail(event.target.value)
@@ -70,7 +84,9 @@ const Register = () => {
             <h3 className='text-3xl tracking-wide font-bold mb-5 text-zinc-800'>Please Register</h3>
 
             <form onSubmit={handleSubmit} className='p-4 '>
-               <input onChange={handleEmailChange} className='border border-gray-500 px-2 w-96' type="email" name="email" id=" email" placeholder='Your Email' required />
+               <input  className='border border-gray-500 px-2 w-96' type="text" name="name" id=" name" placeholder='Your Name' required />
+               <br />
+               <input onChange={handleEmailChange} className='border border-gray-500 px-2 mt-4 w-96' type="email" name="email" id=" email" placeholder='Your Email' required />
                <br />
                <input onBlur={handlePasswordBlur} className='border border-gray-500 px-2 mt-4 w-96' type="password" name="password" id="password" placeholder='Your Password' required />
                <br />
