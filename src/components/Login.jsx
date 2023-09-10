@@ -38,6 +38,7 @@ const Login = () => {
             console.log(loggedUser)
             setSuccess('User logged In successfully')
             setError('')
+            event.target.reset();
         })
         .catch(error =>{
             setError(error.message)
@@ -50,6 +51,7 @@ const Login = () => {
         if(!email){
             alert('Please provide your email to reset password')
             return;
+            
         }
         sendPasswordResetEmail(auth, email)
         .then(() =>{
